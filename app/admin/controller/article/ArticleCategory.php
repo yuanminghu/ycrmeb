@@ -57,6 +57,8 @@ class ArticleCategory extends AuthController
         $f[] = Form::frameImageOne('image', '分类图片', Url::buildUrl('admin/widget.images/index', array('fodder' => 'image')))->icon('image')->width('100%')->height('500px');
         $f[] = Form::number('sort', '排序', 0);
         $f[] = Form::radio('status', '状态', 1)->options([['value' => 1, 'label' => '显示'], ['value' => 0, 'label' => '隐藏']]);
+        $f[] = Form::radio('hot', '热门', 0)->options([['value' => 1, 'label' => '是'], ['value' => 0, 'label' => '否']]);
+
         $form = Form::make_post_form('添加分类', $f, Url::buildUrl('save'));
         $this->assign(compact('form'));
         return $this->fetch('public/form-builder');
@@ -86,7 +88,7 @@ class ArticleCategory extends AuthController
             ['new_id', []],
             ['image', []],
             ['sort', 0],
-            'status',]);
+            'status',['hot', 0]]);
         if (!$data['title']) return Json::fail('请输入分类名称');
         if (count($data['image']) != 1) return Json::fail('请选择分类图片，并且只能上传一张');
         if ($data['sort'] < 0) return Json::fail('排序不能是负数');
@@ -130,6 +132,7 @@ class ArticleCategory extends AuthController
         $f[] = Form::frameImageOne('image', '分类图片', Url::buildUrl('admin/widget.images/index', array('fodder' => 'image')), $article['image'])->icon('image')->width('100%')->height('500px');
         $f[] = Form::number('sort', '排序', $article['sort']);
         $f[] = Form::radio('status', '状态', $article['status'])->options([['value' => 1, 'label' => '显示'], ['value' => 0, 'label' => '隐藏']]);
+        $f[] = Form::radio('hot', '热门', $article['hot'])->options([['value' => 1, 'label' => '是'], ['value' => 0, 'label' => '否']]);
         $form = Form::make_post_form('编辑分类', $f, Url::buildUrl('update', array('id' => $id)));
         $this->assign(compact('form'));
         return $this->fetch('public/form-builder');
@@ -146,7 +149,7 @@ class ArticleCategory extends AuthController
 //            ['new_id',[]],
             ['image', []],
             ['sort', 0],
-            'status',]);
+            'status',['hot', 0]]);
         if (!$data['title']) return Json::fail('请输入分类名称');
         if (count($data['image']) != 1) return Json::fail('请选择分类图片，并且只能上传一张');
         if ($data['sort'] < 0) return Json::fail('排序不能是负数');

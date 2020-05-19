@@ -49,6 +49,7 @@ Page({
     posterbackgd: '/images/posterbackgd.png',
     sharePacket: {
       isState: true,//默认不显示
+      priceName: 0,
     },//分销商详细
     uid: 0,//用户uid
     circular: false,
@@ -348,7 +349,6 @@ Page({
       }
       query.select(idView).boundingClientRect();
       query.exec(function (res) {
-        console.log(res);
         var top = res[0].top;
         var height = res[0].height;
         topArr.push(top);
@@ -396,7 +396,10 @@ Page({
       }
       that.setData({
         navList: navList
-      })
+      });
+      if (app.globalData.isLog) {
+        that.getUserInfo();
+      }
       that.downloadFilestoreImage();
       that.DefaultSelect();
       setTimeout(function () {
@@ -453,8 +456,6 @@ Page({
         break;
       }
     }
-    console.log(666);
-    console.log(value);
     for (var i = 0, len = productAttr.length; i < len; i++) {
       if (productAttr[i].attr_value[0]) productAttr[i].checked = value[i];
     };

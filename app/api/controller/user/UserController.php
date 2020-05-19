@@ -477,6 +477,11 @@ class UserController
         //是否统计积分使用情况
         if ($integral || $all) {
             $user['sum_integral'] = (int)UserBill::getRecordCount($user['uid'], 'integral', 'sign,system_add,gain');
+            $refund_integral = (int)UserBill::where(['uid' => $user['uid'], 'category' => 'integral', 'status' => 1, 'pm' => 0])->where('type', 'in', 'sign,system_add,gain')->sum('number');
+            if ($user['sum_integral'] > $refund_integral)
+                $user['sum_integral'] = $user['sum_integral'] - $refund_integral;
+            else
+                $user['sum_integral'] = 0;
             $user['deduction_integral'] = (int)UserBill::getRecordCount($user['uid'], 'integral', 'deduction', '', true) ?? 0;
             $user['today_integral'] = (int)UserBill::getRecordCount($user['uid'], 'integral', 'sign,system_add,gain', 'today');
         }

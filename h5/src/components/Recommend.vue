@@ -13,7 +13,7 @@
         class="item"
       >
         <div class="pictrue">
-          <img :src="item.image" class="image" />
+          <img v-lazy="item.image" alt="img" class="image" />
           <span
             class="pictrue_log_big pictrue_log_class"
             v-if="item.activity && item.activity.type === '1'"

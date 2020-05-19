@@ -32,6 +32,6 @@ class SystemCity extends BaseModel
      */
     public function children()
     {
-        return $this->hasMany(self::class, 'parent_id', 'city_id')->order('id DESC');
+        return $this->hasMany(self::class, 'parent_id', 'city_id')->order('id ASC');
     }
 }

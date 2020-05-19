@@ -32,8 +32,14 @@ class UtilService
             } else {
                 if (!isset($param[1])) $param[1] = null;
                 if (!isset($param[2])) $param[2] = '';
-                $name = is_array($param[1]) ? $param[0] . '/a' : $param[0];
-                $p[$suffix == true ? $i++ : (isset($param[3]) ? $param[3] : $param[0])] = $request->param($name, $param[1], $param[2]);
+                if (is_array($param[0])) {
+                    $name = is_array($param[1]) ? $param[0][0] . '/a' : $param[0][0] . '/' . $param[0][1];
+                    $keyName = $param[0][0];
+                } else {
+                    $name = is_array($param[1]) ? $param[0] . '/a' : $param[0];
+                    $keyName = $param[0];
+                }
+                $p[$suffix == true ? $i++ : (isset($param[3]) ? $param[3] : $keyName)] = $request->param($name, $param[1], $param[2]);
             }
         }
         return $p;
@@ -57,8 +63,14 @@ class UtilService
             } else {
                 if (!isset($param[1])) $param[1] = null;
                 if (!isset($param[2])) $param[2] = '';
-                $name = is_array($param[1]) ? $param[0] . '/a' : $param[0];
-                $p[$suffix == true ? $i++ : (isset($param[3]) ? $param[3] : $param[0])] = $request->param($name, $param[1], $param[2]);
+                if (is_array($param[0])) {
+                    $name = is_array($param[1]) ? $param[0][0] . '/a' : $param[0][0] . '/' . $param[0][1];
+                    $keyName = $param[0][0];
+                } else {
+                    $name = is_array($param[1]) ? $param[0] . '/a' : $param[0];
+                    $keyName = $param[0];
+                }
+                $p[$suffix == true ? $i++ : (isset($param[3]) ? $param[3] : $keyName)] = $request->param($name, $param[1], $param[2]);
             }
         }
         return $p;
@@ -152,7 +164,7 @@ class UtilService
                 'angle' => 0,
             );
             $titleTwo = array(
-                'text' => mb_strimwidth($data['title'], 24, 24),//TODO 标题
+                'text' => mb_strimwidth($data['title'], mb_strlen(mb_strimwidth($data['title'], 0, 24)), 24),//TODO 标题
                 'left' => 76,
                 'top' => 120,
                 'fontPath' => app()->getRootPath() . 'public/static/font/Alibaba-PuHuiTi-Regular.otf',     //字体文件

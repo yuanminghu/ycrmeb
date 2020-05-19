@@ -752,7 +752,8 @@ class StoreOrder extends BaseModel
         if ($order->combination_id && $res1 && !$order->refund_status) $resPink = StorePink::createPink($order);//创建拼团
         $oid = self::where('order_id', $orderId)->value('id');
         StoreOrderStatus::status($oid, 'pay_success', '用户付款成功');
-        UserBill::expend('购买商品', $uid, 'now_money', 'pay_money', $orderInfo['pay_price'], $orderInfo['id'], $userInfo['now_money'], '支付' . floatval($orderInfo['pay_price']) . '元购买商品');
+        $now_money = User::where('uid', $order['uid'])->value('now_money');
+        UserBill::expend('购买商品', $order['uid'], 'now_money', 'pay_money', $order['pay_price'], $order['id'], $now_money, '支付' . floatval($order['pay_price']) . '元购买商品');
         //支付成功后
         event('OrderPaySuccess', [$order, $formId]);
         $res = $res1 && $resPink;
@@ -1580,7 +1581,7 @@ class StoreOrder extends BaseModel
             $res = $res && StoreOrderStatus::status($item, 'take_delivery', '已收货[自动收货]');
         }
 
-        if(!$res){
+        if (!$res) {
             throw new \Exception('');
         }
 
@@ -2046,9 +2047,18 @@ class StoreOrder extends BaseModel
      */
     public static function sendTen()
     {
-        $list = self::where('paid', 0)->where('is_del', 0)->where('is_system_del', 0)->where('add_time', '>', time() - 900)->where('add_time', '<', time() - 600)->column('user_phone');
-        foreach ($list as $phone) {
-            ShortLetterRepositories::send(true, $phone, [], 'ORDER_PAY_FALSE');
+        $list = self::where('paid', 0)
+            ->where('is_del', 0)
+            ->where('is_system_del', 0)
+            ->where('add_time', '>', time() - 900)
+            ->where('add_time', '<', time() - 600)
+            ->field('order_id,user_phone')
+            ->select();
+        if ($list) {
+            $list = $list->toArray();
+            foreach ($list as $phone) {
+                ShortLetterRepositories::send(true, $phone['user_phone'], ['order_id' => $phone['order_id']], 'ORDER_PAY_FALSE');
+            }
         }
     }
 

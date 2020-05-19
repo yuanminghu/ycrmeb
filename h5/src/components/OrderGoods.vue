@@ -8,7 +8,7 @@
         :key="cart.id"
       >
         <div class="pictrue">
-          <img :src="cart.productInfo.image" class="image" />
+          <img v-lazy="cart.productInfo.image" alt="img" class="image" />
         </div>
         <div class="text">
           <div class="acea-row row-between-wrapper">

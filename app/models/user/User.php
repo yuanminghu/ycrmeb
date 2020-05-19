@@ -388,7 +388,7 @@ class User extends BaseModel
     public static function getSpreadCount($uid = 0)
     {
         if (!$uid) return false;
-        return self::where('spread_uid', $uid)->count();
+        return self::where('spread_uid', $uid)->count('uid');
     }
 
     /**
@@ -410,7 +410,7 @@ class User extends BaseModel
         if (!$uid) return false;
         $uidSubordinate = self::where('spread_uid', $uid)->column('uid');
         if (!count($uidSubordinate)) return 0;
-        return self::where('spread_uid', 'IN', implode(',', $uidSubordinate))->count();
+        return self::where('spread_uid', 'IN', implode(',', $uidSubordinate))->count('uid');
     }
 
     /**
@@ -598,7 +598,7 @@ class User extends BaseModel
             ->where('t1.spread_uid', '<>', 0)
             ->order('count desc')
             ->order('t0.uid desc')
-            ->where('t0.add_time', 'BETWEEN', [$startTime, $endTime])
+            ->where('t1.add_time', 'BETWEEN', [$startTime, $endTime])
             ->page($data['page'], $data['limit'])
             ->group('t0.uid')
             ->select();

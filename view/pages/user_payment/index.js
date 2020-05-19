@@ -50,10 +50,14 @@ Page({
   navRecharge:function(e){
      this.setData({
        active: e.currentTarget.dataset.id,
-       rechar_id: this.data.picList[0].id,
-       numberPic: this.data.picList[0].price,
        activePic: 0
      })
+    if (this.data.picList.length){
+      this.setData({
+        rechar_id: this.data.picList[0].id,
+        numberPic: this.data.picList[0].price
+      })
+     }
   },
    /**  
    * 选择金额

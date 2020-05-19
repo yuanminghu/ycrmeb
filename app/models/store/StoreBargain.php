@@ -61,7 +61,7 @@ class StoreBargain extends BaseModel
     public static function validBargain($bargainId = 0)
     {
         $model = self::validWhere();
-        return $bargainId ? $model->where('id', $bargainId)->count() : $model->count();
+        return $bargainId ? $model->where('id', $bargainId)->count('id') : $model->count('id');
     }
 
     /**

@@ -67,7 +67,7 @@ class NoticeRepositories
         if ($switch) {
             try {
                 $order['cart_id'] = is_string($order['cart_id']) ? json_decode($order['cart_id'], true) : $order['cart_id'];
-                $cartInfo = StoreOrderCartInfo::whereIn('cart_id', $order['cart_id'])->field('cart_info')->select();
+                $cartInfo = StoreOrderCartInfo::whereIn('cart_id', $order['cart_id'])->where('oid', $order['order_id'])->field('cart_info')->select();
                 $cartInfo = count($cartInfo) ? $cartInfo->toArray() : [];
                 $product = [];
                 foreach ($cartInfo as $item) {

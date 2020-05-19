@@ -35,7 +35,7 @@
         v-for="(item, index) in menus"
         :key="index"
       >
-        <div class="pictrue"><img :src="item.pic" /></div>
+        <div class="pictrue"><img v-lazy="item.pic" alt="img" /></div>
         <div>{{ item.name }}</div>
       </router-link>
     </div>
@@ -75,7 +75,7 @@
         v-if="activityOne.wap_link !== undefined"
         class="assemble"
       >
-        <img :src="activityOne.pic" />
+        <img v-lazy="activityOne.pic" alt="img" />
         <div class="text">
           <div class="name">{{ activityOne.title }}</div>
           <div class="infor">{{ activityOne.info }}</div>
@@ -88,7 +88,7 @@
           v-for="(item, index) in activity"
           :key="index"
         >
-          <img :src="item.pic" />
+          <img v-lazy="item.pic" alt="img" />
           <div class="text">
             <div class="name">{{ item.title }}</div>
             <div class="infor">{{ item.info }}</div>
@@ -120,7 +120,7 @@
               }"
             >
               <div class="img-box">
-                <img :src="item.pic" />
+                <img v-lazy="item.pic" alt="img" />
               </div>
               <div class="pro-info line1">{{ item.cate_name }}</div>
             </router-link>
@@ -149,7 +149,7 @@
             :key="index"
           >
             <router-link :to="item.wap_link ? item.wap_link : ''"
-              ><img :src="item.img"
+              ><img v-lazy="item.img" alt="img"
             /></router-link>
           </swiper-slide>
         </swiper>
@@ -176,7 +176,7 @@
           :key="index"
         >
           <div class="pictrue">
-            <img :src="item.image" />
+            <img v-lazy="item.image" alt="img" />
             <img
               src="@assets/images/one.png"
               class="numPic"
@@ -202,7 +202,7 @@
     </div>
     <div v-if="newGoodsBananr">
       <div class="adver">
-        <img :src="newGoodsBananr" />
+        <img v-lazy="newGoodsBananr" alt="img" />
       </div>
     </div>
     <div class="wrapper" v-if="info.firstList.length > 0">
@@ -226,7 +226,7 @@
           >
             <div @click="goDetail(item)">
               <div class="img-box">
-                <img :src="item.image" />
+                <img v-lazy="item.image" alt="img" />
                 <span
                   class="pictrue_log_medium pictrue_log_class"
                   v-if="item.activity && item.activity.type === '1'"
@@ -287,6 +287,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import { swiper, swiperSlide } from "vue-awesome-swiper";
 import "@assets/css/swiper.min.css";

@@ -34,15 +34,15 @@ class StoreProductController
     public function lst(Request $request)
     {
         $data = UtilService::getMore([
-            ['sid', 0],
-            ['cid', 0],
+            [['sid', 'd'], 0],
+            [['cid', 'd'], 0],
             ['keyword', ''],
             ['priceOrder', ''],
             ['salesOrder', ''],
-            ['news', 0],
-            ['page', 0],
-            ['limit', 0],
-            ['type', 0]
+            [['news', 'd'], 0],
+            [['page', 'd'], 0],
+            [['limit', 'd'], 0],
+            [['type', 0], 0]
         ], $request);
         return app('json')->successful(StoreProduct::getProductList($data, $request->uid()));
     }
@@ -135,6 +135,8 @@ class StoreProductController
         $storeInfo['userCollect'] = StoreProductRelation::isProductRelation($id, $uid, 'collect');
         $storeInfo['userLike'] = StoreProductRelation::isProductRelation($id, $uid, 'like');
         list($productAttr, $productValue) = StoreProductAttr::getProductAttrDetail($id, $uid, $type);
+        $prices = array_column($productValue,'price');
+        array_multisort($prices,SORT_ASC,$productValue);
         StoreVisit::setView($uid, $id, $storeInfo['cate_id'], 'viwe');
         $data['storeInfo'] = StoreProduct::setLevelPrice($storeInfo, $uid, true);
         $data['similarity'] = StoreProduct::cateIdBySimilarityProduct($storeInfo['cate_id'], 'id,store_name,image,price,sales,ficti', 4);
@@ -188,8 +190,8 @@ class StoreProductController
     public function product_hot(Request $request)
     {
         list($page, $limit) = UtilService::getMore([
-            ['page', 0],
-            ['limit', 0]
+            [['page', 'd'], 0],
+            [['limit', 'd'], 0]
         ], $request, true);
         if (!$limit) return app('json')->successful([]);
         $productHot = StoreProduct::getHotProductLoading('id,image,store_name,cate_id,price,unit_name,ot_price', (int)$page, (int)$limit);
@@ -251,7 +253,7 @@ class StoreProductController
     public function reply_list(Request $request, $id)
     {
         list($page, $limit, $type) = UtilService::getMore([
-            ['page', 0], ['limit', 0], ['type', 0]
+            [['page', 'd'], 0], [['limit', 'd'], 0], [['type', 'd'], 0]
         ], $request, true);
         if (!$id || !is_numeric($id)) return app('json')->fail('参数错误!');
         $list = StoreProductReply::getProductReplyList($id, (int)$type, $page, $limit);

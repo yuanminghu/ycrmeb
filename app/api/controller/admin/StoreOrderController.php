@@ -97,7 +97,7 @@ class StoreOrderController
     public function detail(Request $request, $orderId)
     {
         $uid = $request->uid();
-        if (!StoreService::orderServiceStatus($uid))
+        if ((!StoreService::orderServiceStatus($uid)) && !(SystemStoreStaff::verifyStatus($uid)))
             return app('json')->fail('权限不足');
         $order = StoreOrder::getAdminOrderDetail($orderId, 'id,uid,order_id,add_time,status,total_num,total_price,total_postage,pay_price,pay_postage,paid,refund_status,remark,pink_id,combination_id,mark,seckill_id,bargain_id,delivery_type,pay_type,real_name,user_phone,user_address,coupon_price,freight_price,delivery_name,delivery_type,delivery_id');
         if (!$order) return app('json')->fail('订单不存在');

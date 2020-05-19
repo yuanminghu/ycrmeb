@@ -106,7 +106,7 @@ class StoreCombination extends BaseModel
         });
     }
 
-    /*
+    /**
      * 获取是否有拼团产品
      * */
     public static function getPinkIsOpen()

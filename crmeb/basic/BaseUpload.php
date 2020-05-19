@@ -140,7 +140,7 @@ abstract class BaseUpload extends BaseStorage
             if (!isset($headerArray['Content-Type'])) {
                 $header['type'] = 'image/jpeg';
             }
-            if (is_array($headerArray['Content-Type']) && count($headerArray['Content-Length']) == 2) {
+            if (is_array($headerArray['Content-Length']) && count($headerArray['Content-Length']) == 2) {
                 $header['size'] = $headerArray['Content-Length'][1];
             }
             if (is_array($headerArray['Content-Type']) && count($headerArray['Content-Type']) == 2) {

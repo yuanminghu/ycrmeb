@@ -114,7 +114,7 @@ Page({
     });
     if (options.hasOwnProperty('id') && options.hasOwnProperty('time') && options.hasOwnProperty('status')) {
       this.setData({ id: options.id, time: options.time, status: options.status});
-      app.globalData.openPages = '/pages/activity/goods_seckill_details/index?id=' + this.data.id + '&time=' + this.data.time;
+      app.globalData.openPages = '/pages/activity/goods_seckill_details/index?id=' + this.data.id + '&time=' + this.data.time + '&status=' + options.status;
     }else
       return app.Tips({ title:'参数错误'},{tab:3,url:1})
   },
@@ -380,7 +380,7 @@ Page({
       setTimeout(function () {
         that.infoScroll();
       }, 500);
-      app.globalData.openPages = '/pages/activity/goods_seckill_details/index?id=' + that.data.id + '&time=' + that.data.time + '&scene=' + that.data.storeInfo.uid;
+      app.globalData.openPages = '/pages/activity/goods_seckill_details/index?id=' + that.data.id + '&time=' + that.data.time + '&status=' + that.data.status + '&scene=' + that.data.storeInfo.uid;
       wxParse.wxParse('description', 'html', that.data.storeInfo.description || '', that, 0);
       wxh.time(that.data.time, that);
     }).catch(err=>{
@@ -441,7 +441,7 @@ Page({
     var that = this;
     return {
       title: that.data.storeInfo.title,
-      path: app.globalData.openPages,
+      path: app.globalData.openPages ,
       imageUrl: that.data.storeInfo.image,
       success: function () {
         wx.showToast({

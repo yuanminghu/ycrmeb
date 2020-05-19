@@ -107,7 +107,7 @@ class SystemStoreStaff extends AuthController
             })->filterable(1),
             Form::input('staff_name', '店员名称', $service['staff_name'])->col(Form::col(24)),
             Form::input('phone', '手机号码', $service['phone'])->col(Form::col(24)),
-            Form::radio('verify_status', '统计管理开关', $service['verify_status'])->options([['value' => 1, 'label' => '开启'], ['value' => 0, 'label' => '关闭']]),
+            Form::radio('verify_status', '核销开关', $service['verify_status'])->options([['value' => 1, 'label' => '开启'], ['value' => 0, 'label' => '关闭']]),
             Form::radio('status', '状态', $service['status'])->options([['value' => 1, 'label' => '开启'], ['value' => 0, 'label' => '关闭']])
         ];
 

@@ -191,7 +191,7 @@ class UserBillController
                     $urlCode = $imageInfo['dir'];
                 } else $urlCode = $imageInfo['att_dir'];
                 if ($imageInfo['image_type'] == 1) $urlCode = $siteUrl . $urlCode;
-                $siteUrlHttps = set_http_type($siteUrl, 0);
+                $siteUrlHttps = set_http_type($siteUrl, $request->isSsl() ? 0 : 1);
                 $filelink = [
                     'Bold' => 'static' . DS . 'font' . DS . 'Alibaba-PuHuiTi-Regular.otf',
                     'Normal' => 'static' . DS . 'font' . DS . 'Alibaba-PuHuiTi-Regular.otf',
@@ -243,7 +243,7 @@ class UserBillController
                         if ($posterInfo['image_type'] == 1)
                             $item['poster'] = $siteUrlHttps . $posterInfo['dir'];
                         else
-                            $item['poster'] = set_http_type($posterInfo['dir'], 0);
+                            $item['poster'] = set_http_type($posterInfo['dir'], $request->isSsl() ? 0 : 1);
                         $item['poster'] = str_replace('\\', '/', $item['poster']);
                     }
                 }
@@ -257,14 +257,14 @@ class UserBillController
                     SystemAttachment::where(['name' => $name])->delete();
                 }
                 if (!$imageInfo) {
-                    $codeUrl = set_http_type($siteUrl . '?spread=' . $user['uid'], 1);//二维码链接
+                    $codeUrl = set_http_type($siteUrl . '?spread=' . $user['uid'], $request->isSsl() ? 0 : 1);//二维码链接
                     $imageInfo = UtilService::getQRCodePath($codeUrl, $name);
                     if (is_string($imageInfo)) return app('json')->fail('二维码生成失败', ['error' => $imageInfo]);
                     SystemAttachment::attachmentAdd($imageInfo['name'], $imageInfo['size'], $imageInfo['type'], $imageInfo['dir'], $imageInfo['thumb_path'], 1, $imageInfo['image_type'], $imageInfo['time'], 2);
                     $urlCode = $imageInfo['dir'];
                 } else $urlCode = $imageInfo['att_dir'];
                 if ($imageInfo['image_type'] == 1) $urlCode = $siteUrl . $urlCode;
-                $siteUrl = set_http_type($siteUrl, 1);
+                $siteUrl = set_http_type($siteUrl, $request->isSsl() ? 0 : 1);
                 $filelink = [
                     'Bold' => 'static' . DS . 'font' . DS . 'Alibaba-PuHuiTi-Regular.otf',
                     'Normal' => 'static' . DS . 'font' . DS . 'Alibaba-PuHuiTi-Regular.otf',
@@ -316,7 +316,7 @@ class UserBillController
                         if ($posterInfo['image_type'] == 1)
                             $item['wap_poster'] = $siteUrl . $posterInfo['thumb_path'];
                         else
-                            $item['wap_poster'] = UtilService::setHttpType($posterInfo['thumb_path'], 1);
+                            $item['wap_poster'] = set_http_type($posterInfo['thumb_path'], 1);
                     }
                 }
             }
@@ -339,7 +339,7 @@ class UserBillController
     public function integral_list(Request $request)
     {
         list($page, $limit) = UtilService::getMore([
-            ['page', 0], ['limit', 0]
+            [['page', 'd'], 0], [['limit', 'd'], 0]
         ], $request, true);
         return app('json')->successful(UserBill::userBillList($request->uid(), $page, $limit));
 

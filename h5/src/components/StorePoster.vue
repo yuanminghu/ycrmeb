@@ -15,9 +15,10 @@
       />
       <div class="keep">长按图片可以保存到手机</div>
     </div>
-    <div class="mask" @touchmove.prevent @click="posterImageClose"></div>
-    <div class="canvasBox">
-      <canvas ref="myCanvas" width="240" height="412"></canvas>
+    <div class="mask" @touchmove.prevent @click="posterImageClose">
+      <div class="canvasBox">
+        <canvas ref="myCanvas"></canvas>
+      </div>
     </div>
   </div>
 </template>
@@ -58,6 +59,24 @@ export default {
     setHtml2Canvas: function() {
       var c = this.$refs.myCanvas;
       var ctx = c.getContext("2d");
+
+      let H = document.body.clientHeight;
+      let W = window.innerWidth;
+      const pixelRatio = window.devicePixelRatio || 1;
+      const backingStoreRatio =
+        ctx.webkitBackingStorePixelRatio ||
+        ctx.mozBackingStorePixelRatio ||
+        ctx.msBackingStorePixelRatio ||
+        ctx.oBackingStorePixelRatio ||
+        ctx.backingStorePixelRatio ||
+        1;
+      const ratio = pixelRatio / backingStoreRatio;
+      c.width = W * ratio;
+      c.height = H * ratio;
+      c.style.width = W + "px";
+      c.style.height = H + "px";
+      ctx.scale(ratio, ratio);
+
       var imageData = ctx.getImageData(0, 0, c.width, c.height);
       for (var i = 0; i < imageData.data.length; i += 4) {
         // 当该像素是透明的,则设置成白色
@@ -70,40 +89,39 @@ export default {
       }
       ctx.putImageData(imageData, 0, 0);
       var img = new Image();
-      let imgY = 225;
+      let imgY = W - 50;
       img.onload = function() {
-        ctx.drawImage(img, 0, 0, 240, imgY);
+        ctx.drawImage(img, 0, 0, W, imgY);
       };
       img.src = this.posterData.image;
-
-      ctx.font = "14px PingFang-SC-Medium";
+      ctx.font = "22px PingFang-SC-Medium";
       ctx.fillStyle = "#282828";
       var str = this.posterData.title;
-      var initHeight = 260;
+      var initHeight = imgY + 30;
       let fontWidth = ctx.measureText(str).width;
-      this.canvasTextAutoLine(str, c, 10, initHeight, 20, 225, 2);
-      ctx.font = "16px PingFang-SC-Heavy";
+      this.canvasTextAutoLine(str, c, 20, initHeight, 35, W - 20, 2);
+      ctx.font = "32px PingFang-SC-Heavy";
       ctx.fillStyle = "#DF2D0A";
       let textY = 0;
-      if (fontWidth < 220) {
-        textY = initHeight + 30;
+      if (fontWidth < W - 20) {
+        textY = initHeight + 55;
       } else {
-        textY = initHeight + 45;
+        textY = initHeight + 85;
       }
       ctx.textAlign = "center";
-      ctx.fillText("￥" + this.posterData.price, 120, textY);
+      ctx.fillText("￥" + this.posterData.price, W / 2, textY);
 
       var screamsCode = new Image();
-      let codeY = textY + 10;
+      let codeY = textY + 20;
       screamsCode.onload = function() {
-        ctx.drawImage(screamsCode, 10, codeY, 75, 75);
+        ctx.drawImage(screamsCode, 10, codeY, 115, 115);
       };
       screamsCode.src = this.posterData.code;
-      ctx.font = "12px Arial";
+      ctx.font = "18px Arial";
       ctx.fillStyle = "#282828";
       ctx.textAlign = "left";
-      let fontY = codeY + 75 / 2;
-      ctx.fillText("长按识别二维码 立即购买", 90, fontY);
+      let fontY = codeY + 115 / 2;
+      ctx.fillText("长按识别二维码 立即购买", 135, fontY + 10);
       setTimeout(() => {
         this.posterImage = c.toDataURL();
         this.$dialog.loading.close();
@@ -170,6 +188,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
   display: none;
 }
 .poster-first {

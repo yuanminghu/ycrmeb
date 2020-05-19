@@ -1606,7 +1606,7 @@
                         return that.showMsg('上传错误请检查您的配置');
                     });
                 }).catch(function (res) {
-                    return that.showMsg('获取密钥失败,请检查您的配置');
+                    return that.showMsg(res.msg || '获取密钥失败,请检查您的配置');
                 });
             })
         }

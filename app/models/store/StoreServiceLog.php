@@ -85,6 +85,7 @@ class StoreServiceLog extends BaseModel
                     $item['orderInfo'] = $order;
                 }
             }
+            $item['msn_type'] = (int)$item['msn_type'];
         });
     }
 }

@@ -192,7 +192,7 @@ class StoreOrderController
         $info = compact('orderId', 'key');
         if ($orderId) {
             event('OrderCreated', [$order]); //订单创建成功事件
-            event('ShortMssageSend', [$orderId, 'AdminPlaceAnOrder']);//发送管理员通知
+//            event('ShortMssageSend', [$orderId, 'AdminPlaceAnOrder']);//发送管理员通知
             switch ($payType) {
                 case "weixin":
                     $orderInfo = StoreOrder::where('order_id', $orderId)->find();

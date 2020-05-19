@@ -114,8 +114,13 @@ class StoreSeckillController
      */
     public function detail(Request $request, $id, $time = 0)
     {
-        if (!$id || !($storeInfo = StoreSeckill::getValidProduct($id))) return app('json')->fail('商品不存在或已下架!');
-        $storeInfo = $storeInfo->hidden(['cost', 'add_time', 'is_del'])->toArray();
+        $storeInfo = StoreSeckill::getValidProduct($id);
+        if ($storeInfo)
+            $storeInfo = $storeInfo->hidden(['cost', 'add_time', 'is_del'])->toArray();
+        else
+            $storeInfo = [];
+        if (!$id || !$storeInfo) return app('json')->fail('商品不存在或已下架!');
+
         $siteUrl = sys_config('site_url');
         $storeInfo['image'] = set_file_url($storeInfo['image'], $siteUrl);
         $storeInfo['image_base'] = set_file_url($storeInfo['image'], $siteUrl);
@@ -140,7 +145,7 @@ class StoreSeckillController
         } else $data['replyChance'] = 0;
         list($productAttr, $productValue) = StoreProductAttr::getProductAttrDetail($id, $uid, 0, 1);
         foreach ($productValue as $k => $v) {
-            $productValue[$k]['product_stock'] = StoreProductAttrValue::where('product_id',$storeInfo['product_id'])->where('suk',$v['suk'])->where('type',0)->value('stock');
+            $productValue[$k]['product_stock'] = StoreProductAttrValue::where('product_id', $storeInfo['product_id'])->where('suk', $v['suk'])->where('type', 0)->value('stock');
         }
         $data['productAttr'] = $productAttr;
         $data['productValue'] = $productValue;

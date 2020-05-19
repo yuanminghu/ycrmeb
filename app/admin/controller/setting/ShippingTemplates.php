@@ -131,6 +131,12 @@ class ShippingTemplates extends AuthController
             //设置指定包邮
             if ($data['appoint']) {
                 $res = $res && ShippingTemplatesFree::saveFree($data['appoint_info'], $data['type'], $id);
+            } else {
+                if ($id) {
+                    if (ShippingTemplatesFree::where('temp_id', $id)->count()) {
+                        $res = $res && ShippingTemplatesFree::where('temp_id', $id)->delete();
+                    }
+                }
             }
             if ($res) {
                 STModel::commitTrans();

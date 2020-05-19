@@ -138,7 +138,7 @@ class UserBill extends BaseModel
             ->sum('number');
     }
 
-    /*
+    /**
      * 获取用户账单明细
      * @param int $uid 用户uid
      * @param int $page 页码
@@ -239,28 +239,6 @@ class UserBill extends BaseModel
     {
         if (!strlen(trim($uid))) return [];
         $uids = User::where('spread_uid', $uid)->column('uid');
-        // $uidss = User::whereIn('spread_uid',$uids)->column('uid');
-        // $uidsss = array_merge($uids,$uidss);
-        // $order = StoreOrder::alias('o')->join('User u', 'u.uid=o.uid', 'right')->whereIn('o.uid',$uidsss)->where(['o.paid'=>1,'o.refund_status'=>0,'o.is_del'=>0])->feild("o.id,o.order_id,FROM_UNIXTIME(o.add_time, '%Y-%m-%d %H:%i') as time,u.avatar,u.nickname")->select()->toArray();
-        // $orderId = array_column($order, 'id');
-        // $orderAgent = self::whereIn('link_id',$orderId)->where(['type'=>'brokerage','category'=>'now_money','pm'=>1])->feild('link_id,number')->select()->toArray();
-
-        // foreach ($order as &$v1) {
-        //     $number = array_filter($orderAgent,function($item) use ($v1){
-        //         if($item['link_id']==$v1['id']){
-        //             return $item['number'];
-        //         }
-        //     });
-        //     if($number){
-        //         $v1['number'] = $number;
-        //     }else{
-        //         $v1['number'] = 0;
-        //     }
-        // }
-
-        // return $order;
-
-
         $model = new self;
         $model = $model->alias('b');
         $model = $model->join('StoreOrder o', 'o.id=b.link_id');
@@ -300,6 +278,8 @@ class UserBill extends BaseModel
         if ($time) $model = $model->whereTime('add_time', $time);
         if ($pm) {
             $model = $model->where('pm', 0);
+        }else{
+            $model = $model->where('pm', 1);
         }
         return $model->sum('number');
     }
@@ -322,7 +302,7 @@ class UserBill extends BaseModel
             $query->where(function ($query1) use ($uid, $type) {
                 $query1->where('b.uid', $uid)->where('b.type', $type);
             })->whereOr(function ($query2) use ($uids, $type) {
-                $query2->where('b.uid', 'in', $uids)->where('b.type', 'pay_product');
+                $query2->where('b.uid', 'in', $uids)->where('b.type', 'pay_money');
             });
         });
         $model = $model->where('b.category', $category);

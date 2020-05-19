@@ -1113,7 +1113,6 @@ HTML;
                 WechatTemplateService::sendTemplate($openid, WechatTemplateService::ORDER_POSTAGE_SUCCESS, $group, $url);
             }
         }
-
     }
 
     /** 收货后发送模版消息

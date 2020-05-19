@@ -5,12 +5,14 @@ namespace app\api\controller;
 use app\admin\model\system\SystemAttachment;
 use app\models\store\StoreCategory;
 use app\models\store\StoreCouponIssue;
+use app\models\store\StorePink;
 use app\models\store\StoreProduct;
 use app\models\store\StoreService;
 use app\models\system\Express;
 use app\models\system\SystemCity;
 use app\models\system\SystemStore;
 use app\models\system\SystemStoreStaff;
+use app\models\user\User;
 use app\models\user\UserBill;
 use app\models\user\WechatUser;
 use app\Request;
@@ -40,6 +42,7 @@ class PublicController
         $menus = sys_data('routine_home_menus') ?: [];//TODO 首页按钮
         $roll = sys_data('routine_home_roll_news') ?: [];//TODO 首页滚动新闻
         $activity = sys_data('routine_home_activity', 3) ?: [];//TODO 首页活动区域图片
+        $explosive_money = sys_data('index_categy_images') ?: [];//TODO 首页超值爆款
         $site_name = sys_config('site_name');
         $routine_index_page = sys_data('routine_index_page');
         $info['fastInfo'] = $routine_index_page[0]['fast_info'] ?? '';//sys_config('fast_info');//TODO 快速选择简介
@@ -68,7 +71,7 @@ class PublicController
         }
         $newGoodsBananr = sys_config('new_goods_bananr');
         $tengxun_map_key = sys_config('tengxun_map_key');
-        return app('json')->successful(compact('banner', 'menus', 'roll', 'info', 'activity', 'lovely', 'benefit', 'likeInfo', 'logoUrl', 'couponList', 'site_name', 'subscribe', 'newGoodsBananr', 'tengxun_map_key'));
+        return app('json')->successful(compact('banner', 'menus', 'roll', 'info', 'activity', 'lovely', 'benefit', 'likeInfo', 'logoUrl', 'couponList', 'site_name', 'subscribe', 'newGoodsBananr', 'tengxun_map_key', 'explosive_money'));
     }
 
     /**
@@ -301,6 +304,19 @@ class PublicController
             return $data;
         }, 0);
         return app('json')->successful($list);
+    }
+
+    /**
+     * 获取拼团数据
+     * @return mixed
+     */
+    public function pink()
+    {
+        $data['pink_count'] = StorePink::where(['status' => 2, 'is_refund' => 0])->count();
+        $data['avatars'] = User::whereIn('uid', function ($query) {
+            $query->name('store_pink')->where(['status' => 2, 'is_refund' => 0])->field(['uid'])->select();
+        })->limit(3)->order('uid desc')->column('avatar');
+        return app('json')->successful($data);
     }
 
 }

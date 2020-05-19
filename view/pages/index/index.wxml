@@ -82,7 +82,7 @@
         <!-- end:结束；time：直播时间 -->
         <navigator wx:if='{{liveInfo.roomid}}' hover-class="none" url="plugin-private://wx2b03c6e691cd7370/pages/live-player-plugin?room_id={{liveInfo.roomid}}" class="broadcast time">
            <view class="pictrue">
-              <image src="{{liveInfo.anchor_img}}"></image>
+              <image src="{{liveInfo.share_img}}"></image>
               <view class="label" wx:if='{{liveInfo.live_status == 101}}'><text class="iconfont icon-zhibo"></text>直播中</view>
               <view class="label" wx:if='{{liveInfo.live_status == 103}}'><text class="iconfont icon-zhibojieshux"></text>已结束</view>
               <view class="label" wx:if='{{liveInfo.live_status == 102}}'><text class="iconfont icon-shijian"></text>直播时间 {{liveInfo._start_time}}</view>
@@ -93,7 +93,7 @@
            <scroll-view class="scroll-view_x" scroll-x style="width:auto;overflow:hidden;">
               <navigator hover-class="none" wx:for='{{liveList}}' wx:key='index' url="plugin-private://wx2b03c6e691cd7370/pages/live-player-plugin?room_id={{item.roomid}}" class="item">
                   <view class="pictrue">
-                    <image src="{{item.anchor_img}}"></image>
+                    <image src="{{item.share_img}}"></image>
                     <view class="label" wx:if='{{item.live_status == 101}}'><text class="iconfont icon-zhibo"></text>直播中</view>
               <view class="label" wx:if='{{item.live_status == 103}}'><text class="iconfont icon-zhibojieshux"></text>已结束</view>
               <view class="label" wx:if='{{item.live_status == 102}}'><text class="iconfont icon-shijian"></text>直播时间 {{item._start_time}}</view>

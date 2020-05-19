@@ -225,6 +225,8 @@ Route::group(function () {
     Route::get('store_list', 'PublicController/store_list')->name('storeList');
     //获取城市列表
     Route::get('city_list', 'PublicController/city_list')->name('cityList');
+    //拼团数据
+    Route::get('pink', 'PublicController/pink')->name('pinkData');
 
 
 })->middleware(\app\http\middleware\AllowOriginMiddleware::class)->middleware(\app\http\middleware\AuthTokenMiddleware::class, false);

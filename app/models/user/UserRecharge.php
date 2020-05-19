@@ -162,7 +162,7 @@ class UserRecharge extends BaseModel
                 'real_name' => $user['nickname'],
                 'extract_type' => 'balance',
                 'extract_price' => $price,
-                'balance' => bcsub($user['brokerage_price'],$price,2),
+                'balance' => bcsub($user['brokerage_price'], $price, 2),
                 'add_time' => time(),
                 'status' => 1
             ];

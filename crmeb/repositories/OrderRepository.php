@@ -4,6 +4,7 @@ namespace crmeb\repositories;
 
 use app\models\store\StoreOrder;
 use app\models\user\User;
+use app\models\user\UserBill;
 use app\models\user\WechatUser;
 use app\admin\model\order\StoreOrder as AdminStoreOrder;
 use crmeb\services\MiniProgramService;
@@ -116,10 +117,10 @@ class OrderRepository
      */
     public static function storeProductOrderTakeDeliveryAdmin($order)
     {
-
         $res1 = AdminStoreOrder::gainUserIntegral($order);
         $res2 = User::backOrderBrokerage($order);
         AdminStoreOrder::orderTakeAfter($order);
+        UserBill::where('uid', $order['uid'])->where('link_id', $order['id'])->where('type', 'pay_money')->update(['take' => 1]);
         if (!($res1 && $res2)) exception('收货失败!');
     }
 
@@ -130,10 +131,10 @@ class OrderRepository
      */
     public static function storeProductOrderTakeDeliveryTimer($order)
     {
-
         $res1 = AdminStoreOrder::gainUserIntegral($order, false);
         $res2 = User::backOrderBrokerage($order, false);
         AdminStoreOrder::orderTakeAfter($order);
+        UserBill::where('uid', $order['uid'])->where('link_id', $order['id'])->where('type', 'pay_money')->update(['take' => 1]);
         if (!($res1 && $res2)) exception('收货失败!');
     }
 

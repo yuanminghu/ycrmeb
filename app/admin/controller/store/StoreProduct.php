@@ -45,7 +45,7 @@ class StoreProduct extends AuthController
      */
     public function index()
     {
-        $type = $this->request->param('type');
+        $type = $this->request->param('type', 1);
         //获取分类
         $this->assign('cate', CategoryModel::getTierList(null, 1));
         //出售中产品
@@ -55,14 +55,11 @@ class StoreProduct extends AuthController
         //仓库中产品
         $warehouse = ProductModel::where('is_del', 0)->count();
         //已经售馨产品
-        $outofstock = ProductModel::getModelObject()->where(ProductModel::setData(4))->where('pav.type',0)->count('DISTINCT id');
+        $outofstock = ProductModel::getModelObject(['type' => 4])->count();
         //警戒库存
-        $store_stock = sys_config('store_stock');
-        if ($store_stock < 0) $store_stock = 2;
-        $policeforce = ProductModel::getModelObject()->where(ProductModel::setData(5))->where('p.stock', '<=', $store_stock)->where('pav.type',0)->count('DISTINCT id');
+        $policeforce = ProductModel::getModelObject(['type' => 5])->count();
         //回收站
         $recycle = ProductModel::where('is_del', 1)->count();
-        if ($type == null) $type = 1;
         $this->assign(compact('type', 'onsale', 'forsale', 'warehouse', 'outofstock', 'policeforce', 'recycle'));
         return $this->fetch();
     }
@@ -81,7 +78,7 @@ class StoreProduct extends AuthController
             ['cate_id', ''],
             ['excel', 0],
             ['order', ''],
-            ['type', $this->request->param('type')]
+            [['type', 'd'], $this->request->param('type/d')]
         ]);
         return Json::successlayui(ProductModel::ProductList($where));
     }

@@ -128,7 +128,7 @@ class ArticleCategory extends AuthController
 //            return $options;
 //        })->multiple(1)->filterable(1);
         $f[] = Form::frameImageOne('image', '分类图片', Url::buildUrl('admin/widget.images/index', array('fodder' => 'image')), $article['image'])->icon('image')->width('100%')->height('500px');
-        $f[] = Form::number('sort', '排序', 0);
+        $f[] = Form::number('sort', '排序', $article['sort']);
         $f[] = Form::radio('status', '状态', $article['status'])->options([['value' => 1, 'label' => '显示'], ['value' => 0, 'label' => '隐藏']]);
         $form = Form::make_post_form('编辑分类', $f, Url::buildUrl('update', array('id' => $id)));
         $this->assign(compact('form'));

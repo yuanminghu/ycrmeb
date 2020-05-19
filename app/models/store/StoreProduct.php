@@ -58,7 +58,7 @@ class StoreProduct extends BaseModel
         return htmlspecialchars_decode($value);
     }
 
-    public static function getValidProduct($productId, $field = 'add_time,browse,cate_id,code_path,cost,ficti,give_integral,id,image,is_sub,is_bargain,is_benefit,is_best,is_del,is_hot,is_new,is_postage,is_seckill,is_show,keyword,mer_id,mer_use,ot_price,postage,price,sales,slider_image,sort,stock,store_info,store_name,unit_name,vip_price,spec_type,IFNULL(sales,0) + IFNULL(ficti,0) as fsales,video_link')
+    public static function getValidProduct($productId, $field = 'add_time,browse,cate_id,code_path,ficti,give_integral,id,image,is_sub,is_bargain,is_benefit,is_best,is_del,is_hot,is_new,is_postage,is_seckill,is_show,keyword,mer_id,mer_use,ot_price,postage,price,sales,slider_image,sort,stock,store_info,store_name,unit_name,vip_price,spec_type,IFNULL(sales,0) + IFNULL(ficti,0) as fsales,video_link')
     {
         $Product = self::where('is_del', 0)->where('is_show', 1)->where('id', $productId)->field($field)->find();
         if ($Product) return $Product->toArray();

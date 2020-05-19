@@ -115,6 +115,7 @@ Page({
       that.setData({
         userAddress: res.data,
         region: region,
+        cityId: res.data.city_id,
       });
     });
   },

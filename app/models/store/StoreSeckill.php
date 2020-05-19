@@ -220,4 +220,57 @@ class StoreSeckill extends BaseModel
         $seckill->stock = bcadd($seckill->stock, $num, 0);
         return $seckill->save();
     }
+
+    /**
+     * 获取秒杀是否已结束
+     * @param $seckill_id
+     * @return bool
+     */
+    public static function isSeckillEnd($seckill_id)
+    {
+        $time_id = self::where('id', $seckill_id)->value('time_id');
+        //秒杀时间段
+        $seckillTime = sys_data('routine_seckill_time') ?? [];
+        $seckillTimeIndex = 0;
+        $activityTime = [];
+        if (count($seckillTime)) {
+            foreach ($seckillTime as $key => &$value) {
+                $currentHour = date('H');
+                $activityEndHour = bcadd((int)$value['time'], (int)$value['continued'], 0);
+                if ($activityEndHour > 24) {
+                    $value['time'] = strlen((int)$value['time']) == 2 ? (int)$value['time'] . ':00' : '0' . (int)$value['time'] . ':00';
+                    $value['state'] = '即将开始';
+                    $value['status'] = 2;
+                    $value['stop'] = (int)bcadd(strtotime(date('Y-m-d')), bcmul($activityEndHour, 3600, 0));
+                } else {
+                    if ($currentHour >= (int)$value['time'] && $currentHour < $activityEndHour) {
+                        $value['time'] = strlen((int)$value['time']) == 2 ? (int)$value['time'] . ':00' : '0' . (int)$value['time'] . ':00';
+                        $value['state'] = '抢购中';
+                        $value['stop'] = (int)bcadd(strtotime(date('Y-m-d')), bcmul($activityEndHour, 3600, 0));
+                        $value['status'] = 1;
+                        if (!$seckillTimeIndex) $seckillTimeIndex = $key;
+                    } else if ($currentHour < (int)$value['time']) {
+                        $value['time'] = strlen((int)$value['time']) == 2 ? (int)$value['time'] . ':00' : '0' . (int)$value['time'] . ':00';
+                        $value['state'] = '即将开始';
+                        $value['status'] = 2;
+                        $value['stop'] = (int)bcadd(strtotime(date('Y-m-d')), bcmul($activityEndHour, 3600, 0));
+                    } else if ($currentHour >= $activityEndHour) {
+                        $value['time'] = strlen((int)$value['time']) == 2 ? (int)$value['time'] . ':00' : '0' . (int)$value['time'] . ':00';
+                        $value['state'] = '已结束';
+                        $value['status'] = 0;
+                        $value['stop'] = (int)bcadd(strtotime(date('Y-m-d')), bcmul($activityEndHour, 3600, 0));
+                    }
+                }
+
+                if ($value['id'] == $time_id) {
+                    $activityTime = $value;
+                    break;
+                }
+            }
+        }
+        if (time() < $activityTime['stop'])
+            return true;
+        else
+            return false;
+    }
 }

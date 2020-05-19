@@ -622,6 +622,14 @@ class User extends BaseModel
         count($list) && $list = $list->toArray();
         $export = [];
         foreach ($list as &$value) {
+            //退款退的佣金 -
+            $refund_commission = UserBill::where(['uid' => $value['uid'], 'category' => 'now_money', 'type' => 'brokerage'])
+                ->where('pm', 0)
+                ->sum('number');
+            if ($value['sum_number'] > $refund_commission)
+                $value['sum_number'] = bcsub($value['sum_number'],$refund_commission,2);
+            else
+                $value['sum_number'] = 0;
             $value['ex_price'] = UserExtract::where('uid', $value['uid'])->sum('extract_price');
             $value['extract_price'] = UserExtract::where('uid', $value['uid'])->where('status', 1)->sum('extract_price');
             $cashPrice = UserExtract::where('uid', $value['uid'])->where('status', 0)->sum('extract_price');
@@ -652,6 +660,7 @@ class User extends BaseModel
             ->join('user_bill B', 'B.uid=A.uid')
             ->group('A.uid')
             ->where('B.type', 'brokerage')
+            ->where('B.pm',1)
             ->where('B.category', 'now_money')
             ->field('sum(B.number) as sum_number,A.nickname,A.uid,A.now_money,A.brokerage_price');
         if ($where['order'] == '') {
@@ -680,7 +689,15 @@ class User extends BaseModel
     public static function getUserinfo($uid)
     {
         $userinfo = self::where('uid', $uid)->field('nickname,spread_uid,now_money,add_time')->find()->toArray();
-        $userinfo['number'] = (float)UserBill::where('category', 'now_money')->where('uid', $uid)->where('type', 'brokerage')->sum('number');
+        $userinfo['number'] = (float)UserBill::where('category', 'now_money')->where('uid', $uid)->where('pm',1)->where('type', 'brokerage')->sum('number');
+        //退款退的佣金 -
+        $refund_commission = UserBill::where(['uid' => $uid, 'category' => 'now_money', 'type' => 'brokerage'])
+            ->where('pm', 0)
+            ->sum('number');
+        if ($userinfo['number'] > $refund_commission)
+            $userinfo['number'] = bcsub($userinfo['number'],$refund_commission,2);
+        else
+            $userinfo['number'] = 0;
         $userinfo['spread_name'] = $userinfo['spread_uid'] ? self::where('uid', $userinfo['spread_uid'])->value('nickname') : '';
         return $userinfo;
     }
@@ -1160,7 +1177,7 @@ class User extends BaseModel
             ->order('uid desc')->page((int)$page, (int)$limit)->select();
         count($list) && $list = $list->toArray();
         foreach ($list as &$item) {
-            $item['add_time'] = date('Y-m-d H', $item['add_time']);
+            $item['add_time'] = date('Y-m-d H:i:s', $item['add_time']);
         }
         return $list;
     }

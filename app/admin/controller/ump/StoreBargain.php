@@ -14,7 +14,8 @@ use app\admin\model\store\{StoreCategory,
     StoreProductAttr,
     StoreProductAttrResult,
     StoreProduct as ProductModel,
-    StoreProductAttrValue};
+    StoreProductAttrValue
+};
 use crmeb\traits\CurdControllerTrait;
 use think\facade\Route as Url;
 use app\admin\model\system\{SystemAttachment, ShippingTemplates};
@@ -133,7 +134,7 @@ class StoreBargain extends AuthController
         $product = StoreBargainModel::get($id);
         if (!$product) return $this->failed('数据不存在!');
         $f = [];
-        $f[] = Form::input('product_id','产品ID', $product->getData('product_id'))->disabled(true);
+        $f[] = Form::input('product_id', '产品ID', $product->getData('product_id'))->disabled(true);
         $f[] = Form::input('title', '砍价活动名称', $product->getData('title'));
         $f[] = Form::input('info', '砍价活动简介', $product->getData('info'))->type('textarea');
         $f[] = Form::input('unit_name', '单位', $product->getData('unit_name'))->placeholder('个、位');
@@ -218,6 +219,7 @@ class StoreBargain extends AuthController
         if ($id) {
             $product = StoreBargainModel::get($id);
             if (!$product) return Json::fail('数据不存在!');
+            unset($data['price'], $data['min_price']);
             $res = StoreBargainModel::edit($data, $id);
             if ($res) return Json::successful('修改成功');
             else return Json::fail('修改失败');
@@ -277,9 +279,9 @@ class StoreBargain extends AuthController
         if (!$id) return $this->failed('数据不存在');
         $bargain = StoreBargainModel::get($id);
         if (!$bargain) return Json::fail('数据不存在!');
-        if($field == 'rule'){
+        if ($field == 'rule') {
             $data['rule'] = request()->post('rule');
-        }else{
+        } else {
             $data['description'] = request()->post('description');
             StoreDescription::saveDescription($data['description'], $id, 2);
         }
@@ -460,7 +462,7 @@ class StoreBargain extends AuthController
             $attr[0]['detail'][0] = '默认';
         }
         StoreProductAttr::createProductAttr($attr, $detail, $data['id'], 2);
-        StoreBargainModel::where('id', $data['id'])->update(['stock' => $stock, 'quota' => $quota, 'quota_show' => $quota, 'price' => $price,'min_price'=>$min_price]);
+        StoreBargainModel::where('id', $data['id'])->update(['stock' => $stock, 'quota' => $quota, 'quota_show' => $quota, 'price' => $price, 'min_price' => $min_price]);
         return Json::successful('添加成功!');
     }
 
@@ -488,7 +490,7 @@ class StoreBargain extends AuthController
         $value = attr_format($attr)[1];
         $valueNew = [];
         $count = 0;
-        $min_price = StoreBargainModel::where('id',$id)->value('min_price');
+        $min_price = StoreBargainModel::where('id', $id)->value('min_price');
         foreach ($value as $key => $item) {
             $detail = $item['detail'];
             sort($item['detail'], SORT_STRING);
@@ -500,12 +502,12 @@ class StoreBargain extends AuthController
                 }
                 $valueNew[$count]['detail'] = json_encode($detail);
                 $valueNew[$count]['pic'] = $sukValue[$suk]['pic'] ?? '';
-                $valueNew[$count]['price'] = $sukValue[$suk]['price'] ? floatval($sukValue[$suk]['price']) : 0;
+                $valueNew[$count]['price'] = isset($sukValue[$suk]['price']) ? floatval($sukValue[$suk]['price']) : 0;
                 $valueNew[$count]['min_price'] = $min_price;
-                $valueNew[$count]['cost'] = $sukValue[$suk]['cost'] ? floatval($sukValue[$suk]['cost']) : 0;
+                $valueNew[$count]['cost'] = isset($sukValue[$suk]['cost']) ? floatval($sukValue[$suk]['cost']) : 0;
                 $valueNew[$count]['ot_price'] = isset($sukValue[$suk]['ot_price']) ? floatval($sukValue[$suk]['ot_price']) : 0;
-                $valueNew[$count]['stock'] = $sukValue[$suk]['stock'] ? intval($sukValue[$suk]['stock']) : 0;
-                $valueNew[$count]['quota'] = $sukValue[$suk]['quota'] ? intval($sukValue[$suk]['quota']) : 0;
+                $valueNew[$count]['stock'] = isset($sukValue[$suk]['stock']) ? intval($sukValue[$suk]['stock']) : 0;
+                $valueNew[$count]['quota'] = isset($sukValue[$suk]['quota']) ? intval($sukValue[$suk]['quota']) : 0;
                 $valueNew[$count]['bar_code'] = $sukValue[$suk]['bar_code'] ?? '';
                 $valueNew[$count]['weight'] = $sukValue[$suk]['weight'] ?? 0;
                 $valueNew[$count]['volume'] = $sukValue[$suk]['volume'] ?? 0;

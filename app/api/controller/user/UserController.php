@@ -269,9 +269,12 @@ class UserController
         } catch (ValidateException $e) {
             return app('json')->fail($e->getError());
         }
+        //编辑
         if ($addressInfo['id'] && UserAddress::be(['id' => $addressInfo['id'], 'uid' => $request->uid(), 'is_del' => 0])) {
             $id = $addressInfo['id'];
             unset($addressInfo['id']);
+            if ($addressInfo['city_id']==0)
+                unset($addressInfo['city_id']);
             if (UserAddress::edit($addressInfo, $id, 'id')) {
                 if ($addressInfo['is_default'])
                     UserAddress::setDefaultAddress($id, $request->uid());

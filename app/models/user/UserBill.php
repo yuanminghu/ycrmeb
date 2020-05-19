@@ -92,8 +92,15 @@ class UserBill extends BaseModel
      */
     public static function yesterdayCommissionSum($uid)
     {
-        return self::where('uid', $uid)->where('category', 'now_money')->where('type', 'brokerage')->where('pm', 1)
+        $get_commission = self::where('uid', $uid)->where('category', 'now_money')->where('type', 'brokerage')->where('pm', 1)
             ->where('status', 1)->whereTime('add_time', 'yesterday')->sum('number');
+        $refund_commission = self::where('uid', $uid)->where('category', 'now_money')->where('type', 'brokerage')->where('pm', 0)
+            ->where('status', 1)->whereTime('add_time', 'yesterday')->sum('number');
+        if ($get_commission > $refund_commission)
+            $yesterday_commision = bcsub($get_commission, $refund_commission, 2);
+        else
+            $yesterday_commision = 0;
+        return $yesterday_commision;
     }
 
     /**
@@ -153,19 +160,19 @@ class UserBill extends BaseModel
             ->field('FROM_UNIXTIME(add_time,"%Y-%m") as time,group_concat(id SEPARATOR ",") ids')->group('time');
         switch ((int)$type) {
             case 0:
-                $model = $model->where('type', 'in', 'recharge,brokerage,pay_product,system_add,pay_product_refund,system_sub');
+                $model = $model->where('type', 'in', 'recharge,brokerage,pay_money,system_add,pay_product_refund,system_sub');
                 break;
             case 1:
-                $model = $model->where('type', 'pay_product');
+                $model = $model->where('type', 'pay_money');
                 break;
             case 2:
                 $model = $model->where('type', 'in', 'recharge,system_add');
                 break;
             case 3:
-                $model = $model->where('type', 'brokerage')->whereOr('type', 'recharge');
+                $model = $model->where('type', 'brokerage');
                 break;
             case 4:
-                $model = $model->where('type', 'extract')->whereOr('type', 'recharge');
+                $model = $model->where('type', 'extract');
                 break;
         }
         if ($page) $model = $model->page((int)$page, (int)$limit);
@@ -278,7 +285,7 @@ class UserBill extends BaseModel
         if ($time) $model = $model->whereTime('add_time', $time);
         if ($pm) {
             $model = $model->where('pm', 0);
-        }else{
+        } else {
             $model = $model->where('pm', 1);
         }
         return $model->sum('number');

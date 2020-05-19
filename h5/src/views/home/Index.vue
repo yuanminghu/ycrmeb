@@ -149,7 +149,7 @@
             :key="index"
           >
             <router-link :to="item.wap_link ? item.wap_link : ''"
-              ><img v-lazy="item.img" alt="img"
+              ><img :src="item.img"
             /></router-link>
           </swiper-slide>
         </swiper>
@@ -268,6 +268,7 @@
       @checked="couponClose"
       @close="couponClose"
     ></Coupon-window>
+
     <div style="height:1.2rem;"></div>
     <div>
       <iframe
@@ -541,4 +542,7 @@ export default {
 .index .follow {
   z-index: 100000;
 }
+  .keep{
+    text-align: center;
+  }
 </style>

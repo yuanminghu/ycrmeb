@@ -573,7 +573,12 @@ export default {
               imgUrl: data.image
             };
             wechatEvevt(
-              ["updateAppMessageShareData", "updateTimelineShareData"],
+              [
+                "updateAppMessageShareData",
+                "updateTimelineShareData",
+                "onMenuShareAppMessage",
+                "onMenuShareTimeline"
+              ],
               configAppMessage
             )
               .then(res => {
@@ -582,7 +587,9 @@ export default {
               .catch(res => {
                 if (res.is_ready) {
                   res.wx.updateAppMessageShareData(configAppMessage);
+                  res.wx.onMenuShareAppMessage(configAppMessage);
                   res.wx.updateTimelineShareData(configAppMessage);
+                  res.wx.onMenuShareTimeline(configAppMessage);
                 }
               });
           });
@@ -594,7 +601,12 @@ export default {
             imgUrl: data.image
           };
           wechatEvevt(
-            ["updateAppMessageShareData", "updateTimelineShareData"],
+            [
+              "updateAppMessageShareData",
+              "updateTimelineShareData",
+              "onMenuShareAppMessage",
+              "onMenuShareTimeline"
+            ],
             configAppMessage
           )
             .then(res => {
@@ -603,7 +615,9 @@ export default {
             .catch(res => {
               if (res.is_ready) {
                 res.wx.updateAppMessageShareData(configAppMessage);
+                res.wx.onMenuShareAppMessage(configAppMessage);
                 res.wx.updateTimelineShareData(configAppMessage);
+                res.wx.onMenuShareTimeline(configAppMessage);
               }
             });
         }

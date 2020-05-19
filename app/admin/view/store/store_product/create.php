@@ -1020,7 +1020,7 @@
                 });
             },
             addBrokerage:function(){
-                if (this.brokerage.brokerage > 0 && this.brokerage.brokerage_two > 0){
+                if (this.brokerage.brokerage >= 0 && this.brokerage.brokerage_two >= 0){
                     var that = this;
                     this.$set(this.formData,'attrs',this.formData.attrs.map(function (item) {
                         item.brokerage = that.brokerage.brokerage;

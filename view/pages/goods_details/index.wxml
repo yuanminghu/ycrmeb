@@ -49,15 +49,15 @@
         <view class="line1 acea-row">
           <text decode="{{true}}" space="{{true}}">活&nbsp;&nbsp;&nbsp;动：</text>
            <view wx:for="{{activity}}" wx:key='index' bindtap="goActivity" data-items='{{item}}'>
-              <view wx:if="{{item.type === '1'}}" class="{{index==0?'activity_pin':'' || index==1?'activity_miao':'' || index==3?'activity_kan':''}}">
+              <view wx:if="{{item.type === '1'}}" class="{{index==0?'activity_pin':'' || index==1?'activity_miao':'' || index==2?'activity_kan':''}}">
                 <text class="iconfonts iconfont icon-pintuan"></text>
                 <text class="activity_title"> 参与秒杀</text>
               </view>
-              <view class="{{index==0?'activity_pin':'' || index==1?'activity_miao':'' || index==3?'activity_kan':''}}" wx:if="{{item.type === '2'}}">
+              <view class="{{index==0?'activity_pin':'' || index==1?'activity_miao':'' || index==2?'activity_kan':''}}" wx:if="{{item.type === '2'}}">
                 <text class="iconfonts iconfont icon-shenhezhong"></text>
                 <text class="activity_title"> 参与砍价</text>
               </view>
-              <view class="{{index==0?'activity_pin':'' || index==1?'activity_miao':'' || index==3?'activity_kan':''}}" wx:if="{{item.type === '3'}}">
+              <view class="{{index==0?'activity_pin':'' || index==1?'activity_miao':'' || index==2?'activity_kan':''}}" wx:if="{{item.type === '3'}}">
                 <text class="iconfonts iconfont icon-kanjia"></text>
                 <text class="activity_title"> 参与拼团</text>
               </view>

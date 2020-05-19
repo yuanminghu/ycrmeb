@@ -550,11 +550,11 @@ class StoreCombination extends AuthController
                 }
                 $valueNew[$count]['detail'] = json_encode($detail);
                 $valueNew[$count]['pic'] = $sukValue[$suk]['pic'] ?? '';
-                $valueNew[$count]['price'] = $sukValue[$suk]['price'] ? floatval($sukValue[$suk]['price']) : 0;
-                $valueNew[$count]['cost'] = $sukValue[$suk]['cost'] ? floatval($sukValue[$suk]['cost']) : 0;
+                $valueNew[$count]['price'] = isset($sukValue[$suk]['price']) ? floatval($sukValue[$suk]['price']) : 0;
+                $valueNew[$count]['cost'] = isset($sukValue[$suk]['cost']) ? floatval($sukValue[$suk]['cost']) : 0;
                 $valueNew[$count]['ot_price'] = isset($sukValue[$suk]['ot_price']) ? floatval($sukValue[$suk]['ot_price']) : 0;
-                $valueNew[$count]['stock'] = $sukValue[$suk]['stock'] ? intval($sukValue[$suk]['stock']) : 0;
-                $valueNew[$count]['quota'] = $sukValue[$suk]['quota'] ? intval($sukValue[$suk]['quota']) : 0;
+                $valueNew[$count]['stock'] = isset($sukValue[$suk]['stock']) ? intval($sukValue[$suk]['stock']) : 0;
+                $valueNew[$count]['quota'] = isset($sukValue[$suk]['quota']) ? intval($sukValue[$suk]['quota']) : 0;
                 $valueNew[$count]['bar_code'] = $sukValue[$suk]['bar_code'] ?? '';
                 $valueNew[$count]['weight'] = $sukValue[$suk]['weight'] ?? 0;
                 $valueNew[$count]['volume'] = $sukValue[$suk]['volume'] ?? 0;

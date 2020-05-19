@@ -28,7 +28,7 @@
                 <div class="text line1">{{ val.nickname }}</div>
               </div>
               <div class="money">
-                <div v-if="val.type === 'pay_product'">
+                <div v-if="val.type === 'pay_money'">
                   暂未返佣
                 </div>
                 <div v-else>

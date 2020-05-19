@@ -135,8 +135,11 @@ class StoreProductController
         $storeInfo['userCollect'] = StoreProductRelation::isProductRelation($id, $uid, 'collect');
         $storeInfo['userLike'] = StoreProductRelation::isProductRelation($id, $uid, 'like');
         list($productAttr, $productValue) = StoreProductAttr::getProductAttrDetail($id, $uid, $type);
+        //对规格进行排序
         $prices = array_column($productValue,'price');
-        array_multisort($prices,SORT_ASC,$productValue);
+        array_multisort($prices,SORT_ASC,SORT_NUMERIC,$productValue);
+        $keys = array_keys($productValue);
+        $productValue = array_combine($keys, $productValue);
         StoreVisit::setView($uid, $id, $storeInfo['cate_id'], 'viwe');
         $data['storeInfo'] = StoreProduct::setLevelPrice($storeInfo, $uid, true);
         $data['similarity'] = StoreProduct::cateIdBySimilarityProduct($storeInfo['cate_id'], 'id,store_name,image,price,sales,ficti', 4);

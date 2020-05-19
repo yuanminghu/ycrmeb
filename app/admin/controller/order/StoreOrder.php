@@ -262,17 +262,29 @@ class StoreOrder extends AuthController
         ]);
         if ($data['total_price'] <= 0) return Json::fail('请输入商品总价');
         if ($data['pay_price'] <= 0) return Json::fail('请输入实际支付金额');
-        $source_info = StoreOrderModel::where('order_id', $data['order_id'])->find();
-        $data['order_id'] = StoreOrderModel::changeOrderId($data['order_id']);
-        StoreOrderModel::edit($data, $id);
-        //改价短信提醒
-        if ($data['pay_price'] != $source_info['pay_price']) {
-            $switch = sys_config('price_revision_switch') ? true : false;
-            ShortLetterRepositories::send($switch, $source_info['user_phone'], ['order_id' => $source_info, 'pay_price' => $source_info['pay_price']], 'PRICE_REVISION_CODE');
+        $orderInfo = StoreOrderModel::get($id);
+        if (!$orderInfo) {
+            return Json::fail('订单不存在');
         }
-        event('StoreProductOrderEditAfter', [$data, $id]);
-        StoreOrderStatus::setStatus($id, 'order_edit', '修改商品总价为：' . $data['total_price'] . ' 实际支付金额' . $data['pay_price']);
-        return Json::successful('修改成功!');
+        $orderInfo->order_id = StoreOrderModel::changeOrderId($data['order_id']);
+        $pay_price = $orderInfo->pay_price;
+        $orderInfo->pay_price = $data['pay_price'];
+        $orderInfo->total_price = $data['total_price'];
+        $orderInfo->total_postage = $data['total_postage'];
+        $orderInfo->pay_postage = $data['pay_postage'];
+        $orderInfo->gain_integral = $data['gain_integral'];
+        if ($orderInfo->save()) {
+            //改价短信提醒
+            if ($data['pay_price'] != $pay_price) {
+                $switch = sys_config('price_revision_switch') ? true : false;
+                ShortLetterRepositories::send($switch, $source_info['user_phone'], ['order_id' => $source_info, 'pay_price' => $source_info['pay_price']], 'PRICE_REVISION_CODE');
+            }
+            event('StoreProductOrderEditAfter', [$data, $id]);
+            StoreOrderStatus::setStatus($id, 'order_edit', '修改商品总价为：' . $data['total_price'] . ' 实际支付金额' . $data['pay_price']);
+            return Json::successful('修改成功!');
+        } else {
+            return Json::fail('订单修改失败');
+        }
     }
 
     /*

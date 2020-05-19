@@ -24,7 +24,7 @@
                       <view class='pictrue'><image src='{{child.avatar}}'></image></view>
                       <view class='text line1'>{{child.nickname}}</view>
                    </view>
-                   <view class='money' wx:if="{{child.type == 'pay_product'}}">暂未返佣</view>
+                   <view class='money' wx:if="{{child.type == 'pay_money'}}">暂未返佣</view>
                    <view class='money' wx:else>返佣：<text class='font-color'>￥{{child.number}}</text></view>
                 </view>
                 <view class='bottom'>

@@ -293,10 +293,10 @@
         var type = obj.type;
         switch (obj.field){
             case 'id':
-                layList.reload({order: layList.order(type,'p.id')},true,null,obj);
+                layList.reload({order: layList.order(type,'id')},true,null,obj);
                 break;
             case 'sales':
-                layList.reload({order: layList.order(type,'p.sales')},true,null,obj);
+                layList.reload({order: layList.order(type,'sales')},true,null,obj);
                 break;
         }
     });

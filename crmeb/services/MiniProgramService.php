@@ -332,7 +332,7 @@ class MiniProgramService
                     if (($count = strpos($notify->out_trade_no, '_')) !== false) {
                         $notify->out_trade_no = substr($notify->out_trade_no, $count + 1);
                     }
-                    (new Hook(PaymentRepositories::class, 'wechat'))->listen($notify->attach, $notify->out_trade_no);
+                    return (new Hook(PaymentRepositories::class, 'wechat'))->listen($notify->attach, $notify->out_trade_no);
                 }
                 return false;
             }

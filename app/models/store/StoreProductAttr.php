@@ -56,6 +56,7 @@ class StoreProductAttr extends BaseModel
                     $value['cart_num'] = 0;
                 if (is_null($value['cart_num'])) $value['cart_num'] = 0;
             }
+            unset($value['cost']);
             $values[$value['suk']] = $value;
         }
         foreach ($attrDetail as $k=>$v){

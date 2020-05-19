@@ -200,24 +200,28 @@ class WechatUser extends BaseModel
      */
     public static function agentSystemPage($where = [])
     {
+        //提现数据
         $exteactSql = UserExtract::where(['status' => 1])
             ->group('uid')
             ->field(['sum(extract_price) as extract_count_price', 'count(id) as extract_count_num', 'uid as euid'])
             ->fetchSql(true)
             ->select();
+        //订单数据
         $orderSql = StoreOrder::alias('o')
             ->where(['o.paid' => 1, 'o.refund_status' => 0])
             ->field(['sum(o.pay_price) as order_price', 'count(o.id) as order_count', 'o.uid as ouid'])
             ->group('o.uid')
             ->fetchSql(true)
             ->select();
+        //佣金数据
         $billSql = UserBill::where(['status' => 1])
-            ->where('type','brokerage')
+            ->where('type', 'brokerage')
+            ->where('pm', 1)
             ->group('uid')
             ->field(['sum(number) as brokerage_money', 'uid as buid'])
             ->fetchSql(true)
             ->select();
-        $model = User::where(['status' => 1]);
+        $model = User::where(['status' => 1])->where('is_promoter', 1);
         $model = $model->alias('u')
             ->join('(' . $orderSql . ') o', 'o.ouid = u.uid', 'left')
             ->join('(' . $billSql . ') b', 'b.buid = u.uid', 'left')
@@ -241,7 +245,7 @@ class WechatUser extends BaseModel
                     $item['spread_name'] = $user['nickname'] . '/' . $user['uid'];
                 }
             }
-            $item['spread_count'] = User::where('spread_uid',$item['uid'])->count();
+            $item['spread_count'] = User::where('spread_uid', $item['uid'])->count();
             //返佣 +
             $brokerage_commission = UserBill::where(['uid' => $item['uid'], 'category' => 'now_money', 'type' => 'brokerage'])
                 ->where('add_time', '>', $search_time)
@@ -255,6 +259,10 @@ class WechatUser extends BaseModel
             $item['broken_commission'] = bcsub($brokerage_commission, $refund_commission, 2);
             if ($item['broken_commission'] < 0)
                 $item['broken_commission'] = 0;
+            if ($item['brokerage_money'] > $refund_commission)
+                $item['brokerage_money'] = bcsub($item['brokerage_money'], $refund_commission, 2);
+            else
+                $item['brokerage_money'] = 0;
             //导出数据
             $export[] = [
                 $item['uid'],
@@ -617,7 +625,7 @@ class WechatUser extends BaseModel
             [
                 'name' => '未提现金额',
                 'field' => '元',
-                'count' => $data['extract_price'],
+                'count' => $data['number'],
                 'background_color' => 'layui-bg-cyan',
                 'col' => 2,
             ],

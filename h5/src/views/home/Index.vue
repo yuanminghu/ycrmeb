@@ -1,3 +1,4 @@
+/* eslint-disable vue/no-unused-components */
 <template>
   <div class="index" v-cloak>
     <div
@@ -15,7 +16,7 @@
       <div class="mask" @click="closeFollowCode"></div>
     </div>
     <div class="header acea-row row-center-wrapper">
-      <div class="logo"><img :src="logoUrl" /></div>
+      <div class="logo"><img @click="news" :src="logoUrl" /></div>
       <router-link :to="'/search'" class="search acea-row row-middle">
         <span class="iconfont icon-xiazai5"></span>搜索商品
       </router-link>
@@ -35,99 +36,56 @@
         v-for="(item, index) in menus"
         :key="index"
       >
-        <div class="pictrue"><img v-lazy="item.pic" alt="img" /></div>
+        <div class="pictrue"><img v-lazy="item.image" alt="img" /></div>
         <div>{{ item.name }}</div>
       </router-link>
     </div>
-    <div class="news acea-row row-between-wrapper">
-      <div class="pictrue"><img src="@assets/images/news.png" /></div>
-      <div class="swiper-no-swiping new-banner">
-        <swiper
-          class="swiper-wrapper"
-          :options="swiperRoll"
-          v-if="roll.length > 0"
-        >
-          <swiper-slide
-            class="swiper-slide"
-            v-for="(item, index) in roll"
-            :key="index"
-          >
-            <router-link
-              :to="item.wap_url ? item.wap_url : ''"
-              class="acea-row row-between-wrapper"
-            >
-              <div class="text acea-row row-between-wrapper">
-                <div class="label" v-if="item.show === '是'">最新</div>
-                <div class="newsTitle line1">{{ item.info }}</div>
-              </div>
-              <div class="iconfont icon-xiangyou"></div>
-            </router-link>
-          </swiper-slide>
-        </swiper>
-      </div>
-    </div>
-    <div
-      class="specialArea acea-row row-between-wrapper"
-      v-if="activityOne.wap_link !== undefined || activity.length"
-    >
-      <router-link
-        :to="activityOne.wap_link ? activityOne.wap_link : ''"
-        v-if="activityOne.wap_link !== undefined"
-        class="assemble"
-      >
-        <img v-lazy="activityOne.pic" alt="img" />
-        <div class="text">
-          <div class="name">{{ activityOne.title }}</div>
-          <div class="infor">{{ activityOne.info }}</div>
+    <div class="hotList" v-if="likeInfo.length > 0">
+      <div class="hot-bg">
+        <div class="title acea-row row-between-wrapper">
+          <div class="text line1">
+            <span class="label">热门榜单</span>
+          </div>
+          <router-link :to="{ path: '/hot_new_goods/' + 2 }" class="more">
+            更多<span class="iconfont icon-jiantou"></span>
+          </router-link>
         </div>
-      </router-link>
-      <div class="list acea-row row-column-between">
+      </div>
+      <div class="list ">
         <router-link
-          :to="item.wap_link ? item.wap_link : ''"
-          class="item"
-          v-for="(item, index) in activity"
+          :to="{ path: '/detail/' + item.id }"
+          class="item acea-row row-between-wrapper"
+          v-for="(item, index) in likeInfo"
           :key="index"
         >
-          <img v-lazy="item.pic" alt="img" />
-          <div class="text">
-            <div class="name">{{ item.title }}</div>
-            <div class="infor">{{ item.info }}</div>
+          <div class="pictrue">
+            <img :src="item.image" />
+            <img
+              src="@assets/images/one.png"
+              class="numPic"
+              v-if="index === 0"
+            />
+            <img
+              src="@assets/images/two.png"
+              class="numPic"
+              v-else-if="index === 1"
+            />
+            <img
+              src="@assets/images/three.png"
+              class="numPic"
+              v-else-if="index === 2"
+            />
+          </div>
+          <div class="desc">
+            <div class="name ">{{ item.store_name }}</div>
+            <div class="money font-color-red">
+              ￥<span class="num">{{ item.price }}</span>
+            </div>
           </div>
         </router-link>
       </div>
     </div>
-    <div class="wrapper" v-if="info.fastList.length > 0">
-      <div class="title acea-row row-between-wrapper">
-        <div class="text">
-          <div class="name line1">快速选择</div>
-          <div class="line1">{{ info.fastInfo }}</div>
-        </div>
-        <router-link :to="'/category'" class="more"
-          >更多<span class="iconfont icon-jiantou"></span
-        ></router-link>
-      </div>
-      <div class="scroll-product">
-        <swiper class="swiper-wrapper" :options="swiperScroll">
-          <swiper-slide
-            v-for="(item, index) in info.fastList"
-            :key="index"
-            class="swiper-slide"
-          >
-            <router-link
-              :to="{
-                path: '/goods_list',
-                query: { id: item.id, title: item.cate_name }
-              }"
-            >
-              <div class="img-box">
-                <img v-lazy="item.pic" alt="img" />
-              </div>
-              <div class="pro-info line1">{{ item.cate_name }}</div>
-            </router-link>
-          </swiper-slide>
-        </swiper>
-      </div>
-    </div>
+    <!-- 精品推荐 -->
     <div
       class="wrapper"
       v-if="info.bastList.length > 0 || info.bastBanner.length > 0"
@@ -155,120 +113,21 @@
         </swiper>
         <div class="swiper-pagination paginationBoutique"></div>
       </div>
-      <Good-list :good-list="info.bastList" :is-sort="false"></Good-list>
-    </div>
-    <div class="hotList" v-if="likeInfo.length > 0">
-      <div class="hot-bg">
-        <div class="title acea-row row-between-wrapper">
-          <div class="text line1">
-            <span class="label">热门榜单</span>根据销量、搜索、好评等综合得出
-          </div>
-          <router-link :to="{ path: '/hot_new_goods/' + 2 }" class="more">
-            更多<span class="iconfont icon-jiantou"></span>
-          </router-link>
-        </div>
-      </div>
-      <div class="list acea-row row-middle">
-        <router-link
-          :to="{ path: '/detail/' + item.id }"
-          class="item"
-          v-for="(item, index) in likeInfo"
-          :key="index"
-        >
-          <div class="pictrue">
-            <img v-lazy="item.image" alt="img" />
-            <img
-              src="@assets/images/one.png"
-              class="numPic"
-              v-if="index === 0"
-            />
-            <img
-              src="@assets/images/two.png"
-              class="numPic"
-              v-else-if="index === 1"
-            />
-            <img
-              src="@assets/images/three.png"
-              class="numPic"
-              v-else-if="index === 2"
-            />
-          </div>
-          <div class="name line1">{{ item.store_name }}</div>
-          <div class="money font-color-red">
-            ￥<span class="num">{{ item.price }}</span>
-          </div>
-        </router-link>
-      </div>
+      <!-- <Good-list :good-list="info.bastList" :is-sort="false"></Good-list> -->
+      <good-grid :good-list="info.bastList" :is-sort="false"></good-grid>
     </div>
     <div v-if="newGoodsBananr">
       <div class="adver">
-        <img v-lazy="newGoodsBananr" alt="img" />
+        <img :src="newGoodsBananr" />
       </div>
     </div>
-    <div class="wrapper" v-if="info.firstList.length > 0">
-      <div class="title acea-row row-between-wrapper">
-        <div class="text">
-          <div class="name line1">
-            首发新品<span class="new font-color-red">NEW~</span>
-          </div>
-          <div class="line1">{{ info.firstInfo }}</div>
-        </div>
-        <router-link :to="{ path: '/hot_new_goods/' + 3 }" class="more"
-          >更多<span class="iconfont icon-jiantou"></span
-        ></router-link>
-      </div>
-      <div class="newProducts">
-        <swiper class="swiper-wrapper" :options="swiperProducts">
-          <swiper-slide
-            class="swiper-slide"
-            v-for="(item, index) in info.firstList"
-            :key="index"
-          >
-            <div @click="goDetail(item)">
-              <div class="img-box">
-                <img v-lazy="item.image" alt="img" />
-                <span
-                  class="pictrue_log_medium pictrue_log_class"
-                  v-if="item.activity && item.activity.type === '1'"
-                  >秒杀</span
-                >
-                <span
-                  class="pictrue_log_medium pictrue_log_class"
-                  v-if="item.activity && item.activity.type === '2'"
-                  >砍价</span
-                >
-                <span
-                  class="pictrue_log_medium pictrue_log_class"
-                  v-if="item.activity && item.activity.type === '3'"
-                  >拼团</span
-                >
-              </div>
-              <div class="pro-info line1">{{ item.store_name }}</div>
-              <div class="money font-color-red">￥{{ item.price }}</div>
-            </div>
-          </swiper-slide>
-        </swiper>
-      </div>
-    </div>
-    <div class="wrapper" v-if="benefit.length > 0">
-      <div class="title acea-row row-between-wrapper">
-        <div class="text">
-          <div class="name line1">促销单品</div>
-          <div class="line1">{{ info.salesInfo }}</div>
-        </div>
-        <router-link :to="'/promotion'" class="more"
-          >更多<span class="iconfont icon-jiantou"></span
-        ></router-link>
-      </div>
-    </div>
-    <Promotion-good :benefit="benefit"></Promotion-good>
+    
     <Coupon-window
       :coupon-list="couponList"
       v-if="showCoupon"
       @checked="couponClose"
       @close="couponClose"
     ></Coupon-window>
-
     <div style="height:1.2rem;"></div>
     <div>
       <iframe
@@ -288,12 +147,10 @@
     </div>
   </div>
 </template>
-
 <script>
 import { swiper, swiperSlide } from "vue-awesome-swiper";
 import "@assets/css/swiper.min.css";
-import GoodList from "@components/GoodList";
-import PromotionGood from "@components/PromotionGood";
+import GoodGrid from "@components/GoodGrid";
 import CouponWindow from "@components/CouponWindow";
 import { getHomeData, getShare, follow } from "@api/public";
 import cookie from "@utils/store/cookie";
@@ -310,8 +167,7 @@ export default {
   components: {
     swiper,
     swiperSlide,
-    GoodList,
-    PromotionGood,
+    GoodGrid,
     CouponWindow
   },
   props: {},
@@ -422,6 +278,7 @@ export default {
         that.$set(that, "activityOne", activityOne);
       }
       that.$set(that, "info", res.data.info);
+      console.log(1, res.data.info);
       that.$set(that, "likeInfo", res.data.likeInfo);
       that.$set(
         that,
@@ -527,6 +384,9 @@ export default {
           openShareAll(configAppMessage);
         });
       }
+    },
+    news() {
+      this.$router.push({path:'/news_list/0'})
     }
   }
 };
@@ -542,7 +402,4 @@ export default {
 .index .follow {
   z-index: 100000;
 }
-  .keep{
-    text-align: center;
-  }
 </style>

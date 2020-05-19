@@ -126,8 +126,9 @@ export default {
   },
   props: {},
   data: function() {
-    const { s = "", id = 0, title = "" } = this.$route.query;
-
+    const { s = "", id = 0, title = "", cid = 0 } = this.$route.query;
+    console.log('"=========route==========="');
+    console.log(this.$route.query);
     return {
       hostProduct: [],
       productList: [],
@@ -139,7 +140,8 @@ export default {
         sid: id, //二级分类id
         news: 0,
         priceOrder: "",
-        salesOrder: ""
+        salesOrder: "",
+        cid: cid
       },
       title: title && id ? title : "",
       loadTitle: "",
@@ -156,14 +158,16 @@ export default {
     },
     $route(to) {
       if (to.name !== "GoodsList") return;
-      const { s = "", id = 0, title = "" } = to.query;
-
+      const { s = "", id = 0, title = "", cid = 0 } = to.query;
+      console.log('=========route===========');
+      console.log(to.query);
       if (s !== this.where.keyword || id !== this.where.sid) {
         this.where.keyword = s;
         this.loadend = false;
         this.loading = false;
         this.where.page = 1;
         this.where.sid = id;
+        this.where.cid = cid;
         this.title = title && id ? title : "";
         this.nows = false;
         this.$set(this, "productList", []);

@@ -1,7 +1,8 @@
 .DS_Store
 node_modules
 /dist
-
+/h5/vue.config.js
+/h5/.env.production
 # local env files
 .env.local
 .env.*.local
@@ -20,3 +21,4 @@ yarn-error.log*
 *.sln
 *.sw?
 build.sh
+*.production
